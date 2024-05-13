@@ -1,4 +1,7 @@
-﻿namespace Domain.Order;
+﻿using LanguageExt;
+using static LanguageExt.Prelude;
+
+namespace Domain.Order;
 
 public static class Order
 {
@@ -18,4 +21,13 @@ public static class Order
             OrderProductChanged e => state with { ProductId = e.ProductId },
             _ => throw new InvalidOperationException($"Unknown event {@event}")
         };
+
+    public static Option<OrderState> From(IEnumerable<OrderEvent> history)
+        => history.Match(
+            Empty: () => None,
+            More: (created, otherEvents) =>
+                Optional(otherEvents.Aggregate(
+                    Create((OrderCreated)created),
+                    (state, @event) => state.Apply(@event)))
+        );
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace Domain.Customer;
 
@@ -19,4 +16,13 @@ public static class Customer
             CustomerPhoneChanged e => state with { Phone = e.Phone },
             _ => throw new InvalidOperationException($"Unknown event {@event}")
         };
+
+    public static Option<CustomerState> From(IEnumerable<CustomerEvent> history)
+        => history.Match(
+            Empty: () => None,
+            More: (created, otherEvents) =>
+                Optional(otherEvents.Aggregate(
+                    Customer.Create((CustomerCreated)created),
+                    (state, @event) => state.Apply(@event)))
+        );
 }

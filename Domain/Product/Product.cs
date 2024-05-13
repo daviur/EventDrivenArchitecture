@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LanguageExt;
+using static LanguageExt.Prelude;
 
 namespace Domain.Product;
+
 public static class Product
 {
     public static ProductState Create(ProductCreated @event)
@@ -19,4 +17,13 @@ public static class Product
             ProductDiscontinued _ => state with { Status = ProductStatus.Discontinued },
             _ => throw new InvalidOperationException($"Unknown event {@event}")
         };
+
+    public static Option<ProductState> From(IEnumerable<ProductEvent> history)
+        => history.Match(
+            Empty: () => None,
+            More: (created, otherEvents) =>
+                Optional(otherEvents.Aggregate(
+                    Product.Create((ProductCreated)created),
+                    (state, @event) => state.Apply(@event)))
+        );
 }
