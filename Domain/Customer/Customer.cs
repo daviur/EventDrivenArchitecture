@@ -17,12 +17,32 @@ public static class Customer
             _ => throw new InvalidOperationException($"Unknown event {@event}")
         };
 
-    public static Option<CustomerState> From(IEnumerable<CustomerEvent> history)
-        => history.Match(
-            Empty: () => None,
-            More: (created, otherEvents) =>
-                Optional(otherEvents.Aggregate(
-                    Customer.Create((CustomerCreated)created),
-                    (state, @event) => state.Apply(@event)))
-        );
+    public async static Task<Option<CustomerState>> From(IAsyncEnumerable<CustomerEvent> history)
+        => await history.MatchAsync<CustomerEvent, Option<CustomerState>>(
+            empty: () => Task.FromResult(Option<CustomerState>.None),
+            more: (created, otherEvents)
+                => Optional(otherEvents.AggregateAsync(
+                        Customer.Create((CustomerCreated)created),
+                        (state, @event) => state.Apply(@event))
+                    .AsTask())
+                    .Sequence()
+            );
+}
+
+public static class IAsyncEnumerableExtensions
+{
+    public static async Task<Option<T>> Head<T>(this IAsyncEnumerable<T> source)
+    {
+        var enumerator = source.GetAsyncEnumerator();
+        bool isNext = await enumerator.MoveNextAsync();
+        return isNext ? enumerator.Current : None;
+    }
+
+    public async static Task<R> MatchAsync<T, R>(this IAsyncEnumerable<T> source, Func<Task<R>> empty, Func<T, IAsyncEnumerable<T>, Task<R>> more)
+    {
+        var head = await source.Head();
+        return await head.MatchAsync(
+            Some: x => more(x, source.Skip(1)),
+            None: () => empty());
+    }
 }
