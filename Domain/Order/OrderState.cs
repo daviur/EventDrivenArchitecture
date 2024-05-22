@@ -13,6 +13,6 @@ public enum OrderStatus
     Canceled
 }
 
-public readonly record struct OrderId(Guid Value);
+public readonly record struct OrderId(Guid Value) : IHasEntityId;
 
 public record OrderState(OrderId Id, CustomerId CustomerId, ProductId ProductId, int Quantity, OrderStatus Status);

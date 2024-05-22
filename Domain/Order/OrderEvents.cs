@@ -3,22 +3,22 @@ using Domain.Product;
 
 namespace Domain.Order;
 
-public abstract record OrderEvent;
+public abstract record OrderEvent(Guid Id, DateTime Timestamp) : Event(Id, Timestamp);
 
-public record OrderCreated(CustomerId CustomerId, ProductId ProductId, int Quantity) : OrderEvent;
+public record OrderCreatedEvent(Guid Id, DateTime Timestamp, CustomerId CustomerId, ProductId ProductId, int Quantity) : OrderEvent(Id, Timestamp);
 
-public record OrderSubmitted : OrderEvent;
+public record OrderSubmittedEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);
 
-public record OrderDelivered : OrderEvent;
+public record OrderDeliveredEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);
 
-public record OrderAccepted : OrderEvent;
+public record OrderAcceptedEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);
 
-public record OrderRejected : OrderEvent;
+public record OrderRejectedEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);
 
-public record OrderCanceled : OrderEvent;
+public record OrderCanceledEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);
 
-public record OrderQuantityChanged(int Quantity) : OrderEvent;
+public record OrderQuantityChangedEvent(Guid Id, DateTime Timestamp, int Quantity) : OrderEvent(Id, Timestamp);
 
-public record OrderProductChanged(ProductId ProductId) : OrderEvent;
+public record OrderProductChangedEvent(Guid Id, DateTime Timestamp, ProductId ProductId) : OrderEvent(Id, Timestamp);
 
-public record OrderShipped : OrderEvent;
+public record OrderShippedEvent(Guid Id, DateTime Timestamp) : OrderEvent(Id, Timestamp);

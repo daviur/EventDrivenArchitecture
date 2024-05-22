@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Domain.Product;
 
-public abstract record ProductEvent;
+public abstract record ProductEvent(Guid Id, DateTime Timestamp) : Event(Id, Timestamp);
 
-public record ProductCreated(string Name, decimal Price, int Quantity) : ProductEvent;
+public record ProductCreatedEvent(Guid Id, DateTime Timestamp, string Name, decimal Price, int Quantity) : ProductEvent(Id, Timestamp);
 
-public record ProductNameChanged(string Name) : ProductEvent;
+public record ProductNameChangedEvent(Guid Id, DateTime Timestamp, string Name) : ProductEvent(Id, Timestamp);
 
-public record ProductPriceChanged(decimal Price) : ProductEvent;
+public record ProductPriceChangedEvent(Guid Id, DateTime Timestamp, decimal Price) : ProductEvent(Id, Timestamp);
 
-public record ProductQuantityChanged(int Quantity) : ProductEvent;
+public record ProductQuantityChangedEvent(Guid Id, DateTime Timestamp, int Quantity) : ProductEvent(Id, Timestamp);
 
-public record ProductDiscontinued : ProductEvent;
+public record ProductDiscontinuedEvent(Guid Id, DateTime Timestamp) : ProductEvent(Id, Timestamp);
 

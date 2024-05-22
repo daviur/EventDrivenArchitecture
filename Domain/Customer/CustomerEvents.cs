@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace Domain.Customer;
 
-public abstract record CustomerEvent;
+public abstract record CustomerEvent(Guid Id, DateTime Timestamp) : Event(Id, Timestamp);
 
-public record CustomerCreated(string Name, string Email, string Phone) : CustomerEvent;
+public record CustomerCreatedEvent(Guid Id, DateTime Timestamp, string Name, string Email, string Phone) : CustomerEvent(Id, Timestamp);
 
-public record CustomerNameChanged(string Name) : CustomerEvent;
+public record CustomerNameChangedEvent(Guid Id, DateTime Timestamp, string Name) : CustomerEvent(Id, Timestamp);
 
-public record CustomerEmailChanged(string Email) : CustomerEvent;
+public record CustomerEmailChangedEvent(Guid Id, DateTime Timestamp, string Email) : CustomerEvent(Id, Timestamp);
 
-public record CustomerPhoneChanged(string Phone) : CustomerEvent;
+public record CustomerPhoneChangedEvent(Guid Id, DateTime Timestamp, string Phone) : CustomerEvent(Id, Timestamp);
